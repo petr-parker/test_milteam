@@ -1,2 +1,2 @@
-# test_milteam
+# Test task
 Test task for mil-team
