@@ -1,2 +1,10 @@
-# Test task
-Test task for mil-team.
+# Test task for mil-team.
+
+![Нумерация блоков для различных архитектур](/images/picture.jpg)
+
+
+|  |
+--------
+
+
+

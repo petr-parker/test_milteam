@@ -3,8 +3,6 @@ from collections import OrderedDict
 import torch
 import torch.nn as nn
 
-from nni.retiarii.nn.pytorch import LayerChoice, InputChoice
-
 
 class Sample(nn.Module):
     '''
@@ -139,9 +137,9 @@ class SuperNet():
         :param train_loader: загрузчик обучающих данных.
         '''
         criterion = self.criterion
-
         total_step = len(train_loader)
-        loss_list, acc_list = [], []
+        loss_lists = [[] for _ in range(9)]
+        acc_lists = [[] for _ in range(9)]
         for epoch in range(num_epochs):
             for i, (images, labels) in enumerate(train_loader):
                 x, y = torch.randint(3, (2,)) + 1
@@ -150,7 +148,7 @@ class SuperNet():
                 
                 outputs = model(images)
                 loss = criterion(outputs, labels)
-                loss_list.append(loss.item())
+                loss_lists[(x - 1) * 3 + (y - 1)].append(loss.item())
 
                 optimizer.zero_grad()
                 loss.backward()
@@ -159,12 +157,12 @@ class SuperNet():
                 total = labels.size(0)
                 _, predicted = torch.max(outputs.data, 1)
                 correct = (predicted == labels).sum().item()
-                acc_list.append(correct / total)
+                acc_lists[(x - 1) * 3 + (y - 1)].append(1.0 * correct / total)
 
                 if (i + 1) % 200 == 0:
                     print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}, Accuracy: {:.2f}%'.format(epoch + 1, num_epochs, i + 1, total_step, loss.item(), (correct / total) * 100))
 
-        return loss_list, acc_list
+        return loss_lists, acc_lists
     
     def validate_sample(self, submod, test_loader):
         '''
